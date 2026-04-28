@@ -2,13 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const { errorHandler } = require('./middleware/errorMiddleware');
+const { errorHandler } = require('./src/middleware/errorMiddleware');
 
 // Route Imports
-const authRoutes = require('./routes/authRoutes');
-const tourRoutes = require('./routes/tourRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
+const authRoutes = require('./src/routes/authRoutes');
+const tourRoutes = require('./src/routes/tourRoutes');
+const bookingRoutes = require('./src/routes/bookingRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
 
 const app = express();
 
