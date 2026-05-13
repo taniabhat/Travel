@@ -1,22 +1,66 @@
-const dotenv = require('dotenv');
-// Load env vars
-dotenv.config();
+// server.js
 
-const connectDB = require('./src/config/db');
-const app = require('./app');
+import 'dotenv/config';
+import './src/config/env.js';
 
-// Connect to database
-connectDB();
+import app from './src/app.js';
+import { connectDB, disconnectDB } from './src/config/db.js';
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+let server;
+
+const startServer = async () => {
+    try {
+        await connectDB();
+
+        server = app.listen(PORT, () => {
+            console.log(
+                `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+            );
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+
+await startServer();
+
+const gracefulShutdown = async (signal) => {
+    console.log(`\n${signal} received. Shutting down gracefully...`);
+
+    try {
+        server.close(async () => {
+            console.log('HTTP server closed');
+
+            await disconnectDB();
+
+            console.log('Database connection closed');
+            process.exit(0);
+        });
+
+        setTimeout(() => {
+            console.error('Forcefully shutting down...');
+            process.exit(1);
+        }, 10000);
+    } catch (error) {
+        console.error('Error during shutdown:', error);
+        process.exit(1);
+    }
+};
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+
+process.on('unhandledRejection', (error) => {
+    console.error('Unhandled Rejection:', error);
+
+    gracefulShutdown('unhandledRejection');
 });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
-    console.log(`Error: ${err.message}`);
-    // Close server & exit process
-    server.close(() => process.exit(1));
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+
+    gracefulShutdown('uncaughtException');
 });
