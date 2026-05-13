@@ -1,0 +1,15 @@
+// src/utils/password.js
+
+import bcrypt from 'bcryptjs';
+
+const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
+
+export const hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
+
+    return bcrypt.hash(password, salt);
+};
+
+export const comparePassword = async (password, hashedPassword) => {
+    return bcrypt.compare(password, hashedPassword);
+};
