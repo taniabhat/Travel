@@ -11,7 +11,7 @@ import tourRoute from './route/tour.route.js';
 import bookingRoute from './route/booking.route.js';
 import paymentRoute from './route/payment.route.js';
 
-import { errorHandler } from './middleware/error.middleware.js';
+import { errorHandler } from './middlewares/error.middleware.js';
 
 const app = express();
 

@@ -5,9 +5,7 @@ import MongoRepository from '../repositories/mongo.repository.js';
 
 const tourRepo = new MongoRepository(Tour);
 
-export const getAllTours = async () => {
-    return await tourRepo.findAll();
-};
+
 
 export const getTourById = async (id) => {
     const tour = await tourRepo.findById(id);
